@@ -14,15 +14,27 @@ if (is_pandoc_installed) {
     if (utils::compareVersion(version, reference) >= 0)
         is_pandoc_version_sufficient <- TRUE
 }
-if (is_pandoc_version_sufficient) {
-    output_path <- tempdir()
+
+ex_sys_pandoc <- function(path, format) {
     excerptr::excerptr(file_name = path,
-                       output_path = output_path, run_pandoc = FALSE)
-    html_file <- file.path(output_path, sub("\\.R$", ".html", basename(path)))
+                       output_path = dirname(path), run_pandoc = FALSE)
+    md_file <- sub("\\.[rRsS]$", ".md", path)
+    out_file <- sub("\\.md$", paste0(".", format), md_file)
     system2(command = basename(Sys.which("pandoc")),
-            args = c(file.path(output_path, sub("\\.R$", ".md", basename(path))), "-o",
-                     html_file))
-    if (interactive()) utils::browseURL(html_file)
+            args = c(md_file, "-o",
+                     out_file))
+    if (! file.exists(out_file)) {
+        stop("Could not compile ", file)
+    } else {
+        return(out_file)
+    }
+}
+
+if (is_pandoc_version_sufficient) {
+    file_path <- file.path(tempdir(), basename(path))
+    file.copy(path, file_path)
+    res <- ex_sys_pandoc(file_path, "html")
+    if (interactive()) utils::browseURL(res)
 }
     
   
