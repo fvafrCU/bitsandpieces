@@ -1,2 +1,1 @@
-# Bits and Pieces
-I don't like gists, having weird github addresses.
+This project has moved to [https://gitlab.com/fvafrCU/bitsandpieces](https://gitlab.com/fvafrCU/bitsandpieces).
